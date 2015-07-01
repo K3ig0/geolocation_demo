@@ -16,6 +16,7 @@
         }
     </style>
     <!--<link rel="stylesheet" href="css/styles.css?v=1.0">
+
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -37,16 +38,32 @@ if (navigator && navigator.geolocation) {
         maximumAge: 20 seconds to refresh the user location
         timeOut: 5 seconds to try with GPS, if not only IP-based
     */
-    navigator.geolocation.getCurrentPosition(
-      successCallback,
-      errorCallback_highAccuracy,
-      {maximumAge:20000, timeout:5000, enableHighAccuracy: true}
-    ); 
+
+    /* 1 Petition
+
+        navigator.geolocation.getCurrentPosition(
+            successCallback,
+            errorCallback_highAccuracy,
+            {maximumAge:20000, timeout:5000, enableHighAccuracy: true}
+        ); 
+    */
+
+    // n Petitions (continuous position updates)
+        navigator.geolocation.watchPosition(
+            successCallback,
+            errorCallback_highAccuracy,
+            {maximumAge:20000, timeout:5000, enableHighAccuracy: true}
+        );
+    
 } else {
     error('not supported');
 }
+
+
 /*function detectBrowser() {
+
     var useragent = navigator.userAgent;
+
     if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
         mapcanvas.style.width = '100%';
         mapcanvas.style.height = '100%';
@@ -55,12 +72,17 @@ if (navigator && navigator.geolocation) {
         mapcanvas.style.width = '800px';
     }
 }*/
+
+
 function successCallback(position) {
     
     var s = document.querySelector('#status');
+
     s.innerHTML = "accuracy: "+position.coords.accuracy+" metres";
     s.className = 'success';
+
     //detectBrowser();
+
     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     var myOptions = {
         zoom: 15,
@@ -70,14 +92,21 @@ function successCallback(position) {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+
     var marker = new google.maps.Marker({
         position: latlng, 
         map: map, 
         title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)"
     });
 }
+
+
 function errorCallback_highAccuracy(error) {
+
     var s = document.querySelector('#status');
+    var msg = " ==> Can't get your location (high accuracy attempt). Error = ";
+
+    /* UNCOMMENT TO ACTIVATE LOW ACCURACY LOCATION
     if (error.code == error.TIMEOUT)
     {
       // trying low accuracy location
@@ -88,16 +117,23 @@ function errorCallback_highAccuracy(error) {
              {maximumAge:600000, timeout:10000, enableHighAccuracy: false});
       return;
     }
-    var msg = " ==> Can't get your location (high accuracy attempt). Error = ";
+    */
     if (error.code == 1)
         msg += "PERMISSION_DENIED";
     else if (error.code == 2)
         msg += "POSITION_UNAVAILABLE";
+    else if (error.code == 3)
+        msg += "TIMEOUT";
+    
     msg += ", msg = "+error.message;
     s.innerHTML = msg;
 }
+
+
 function errorCallback_lowAccuracy(error) {
+
     var s = document.querySelector('#status');
+
     var msg = " ==> Can't get your location (low accuracy attempt). Error = ";
     if (error.code == 1)
         msg += "PERMISSION_DENIED";
@@ -106,8 +142,10 @@ function errorCallback_lowAccuracy(error) {
     else if (error.code == 3)
         msg += "TIMEOUT";
     msg += ", msg = "+error.message;
+
     s.innerHTML = msg;
 }
+
 </script>
 </body>
 </html>
