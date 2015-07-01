@@ -8,7 +8,13 @@
     <meta name="description" content="Geolocation">
     <meta name="author" content="K3ig0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
+    <style>
+        html, body, #mapcanvas {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+    </style>
     <!--<link rel="stylesheet" href="css/styles.css?v=1.0">
 
     <!--[if lt IE 9]>
@@ -42,18 +48,18 @@ if (navigator && navigator.geolocation) {
 }
 
 
-function detectBrowser(mapdiv) {
+/*function detectBrowser() {
 
     var useragent = navigator.userAgent;
 
     if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
         mapcanvas.style.width = '100%';
-        //mapcanvas.style.height = '100%';
+        mapcanvas.style.height = '100%';
     } else {
         mapcanvas.style.height = '600px';
         mapcanvas.style.width = '800px';
     }
-}
+}*/
 
 
 function successCallback(position) {
@@ -63,7 +69,7 @@ function successCallback(position) {
     s.innerHTML = "found you!";
     s.className = 'success';
 
-    detectBrowser(mapcanvas);
+    //detectBrowser();
 
     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     var myOptions = {
