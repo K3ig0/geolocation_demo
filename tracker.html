@@ -1,0 +1,114 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Geolocation, TRACKING</title>
+     
+    <!-- for mobile view -->
+    <meta name="description" content="Geolocation">
+    <meta name="author" content="K3ig0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        html, body, #mapcanvas {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+    </style>
+
+</head>     
+ 
+<body>     
+    <!-- display the map here, you can changed the height or style -->
+    <div id="mapcanvas"></div>
+
+
+    <!--JAVASCRIPT-->
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false&language=en"></script>
+    <script>
+ 
+        var map,
+            currentPositionMarker;
+            //mapCenter = new google.maps.LatLng(14.668626, 121.24295),
+            //map
+ 
+        
+        function initializeMap(position)
+        {
+            map = new google.maps.Map(document.getElementById('mapcanvas'), {
+               zoom: 16,
+               center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+               mapTypeId: google.maps.MapTypeId.ROADMAP
+             });
+        }
+ 
+        function locError(error) {
+            // tell the user if the current position could not be located
+            alert("The current position could not be found!");
+        }
+ 
+        // current position of the user
+        function setCurrentPosition(pos) {
+            initializeMap(pos);
+            currentPositionMarker = new google.maps.Marker({
+                map: map,
+                position: new google.maps.LatLng(
+                    pos.coords.latitude,
+                    pos.coords.longitude
+                ),
+                title: "Current Position"
+            });
+            map.panTo(new google.maps.LatLng(
+                    pos.coords.latitude,
+                    pos.coords.longitude
+                ));
+        }
+ 
+        function displayAndWatch(position) {
+         
+            // set current position
+            setCurrentPosition(position);
+             
+            // watch position
+            watchCurrentPosition();
+        }
+ 
+        function watchCurrentPosition() {
+            var positionTimer = navigator.geolocation.watchPosition(
+                function (position) {
+                    setMarkerPosition(
+                        currentPositionMarker,
+                        position
+                    );
+                });
+        }
+ 
+        function setMarkerPosition(marker, position) {
+            marker.setPosition(
+                new google.maps.LatLng(
+                    position.coords.latitude,
+                    position.coords.longitude)
+            );
+        }
+ 
+        function initLocationProcedure() {
+            //initializeMap();
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(displayAndWatch, locError);
+            } else {
+                alert("Your browser does not support the Geolocation API!");
+            }
+        }
+ 
+        // initialize with a little help of jQuery
+        $(document).ready(function() {
+            initLocationProcedure();
+        });
+    </script>
+
+</body> 
+</html>
