@@ -46,9 +46,11 @@
              });
         }
  
-        function locError(error) {
-            // tell the user if the current position could not be located
-            alert("The current position could not be found!");
+        function error(e) {
+            if (error.code == 1)
+                alert("PERMISSION_DENIED (you must grant geolocalization privileges to this application or activate the location function in your phone)");
+            else if (error.code == 2)
+                alert("POSITION_UNAVAILABLE");
         }
  
         // current position of the user
@@ -68,22 +70,19 @@
                 ));
         }
  
-        function displayAndWatch(position) {
-         
-            // set current position
-            setCurrentPosition(position);
-             
-            // watch position
+        function success(position) {
+            setCurrentPosition(position); 
             watchCurrentPosition();
         }
  
         function watchCurrentPosition() {
+            //continuous position updates
             var positionTimer = navigator.geolocation.watchPosition(
                 function (position) {
                     setMarkerPosition(
                         currentPositionMarker,
                         position
-                    );
+                    ), null, {enableHighAccuracy: true};
                 });
         }
  
@@ -96,15 +95,14 @@
         }
  
         function initLocationProcedure() {
-            //initializeMap();
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(displayAndWatch, locError);
+                navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy: true});
             } else {
                 alert("Your browser does not support the Geolocation API!");
             }
         }
  
-        // initialize with a little help of jQuery
+        // A page can't be manipulated safely until the document is "ready."
         $(document).ready(function() {
             initLocationProcedure();
         });
